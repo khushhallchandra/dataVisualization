@@ -29,4 +29,24 @@ def list(request):
         {'documents': documents, 'form': form},
         context_instance=RequestContext(request)
     )
+def readData():
+    completeName=os.path.join('myproject/media/documents/', 'a.csv') 
+    d=[]
+    f = open( completeName, 'r' )
+	#data is assumed in the form of x and y values which are seperated by comma.
+    csv_f = csv.reader(f)
+    for row in csv_f:
+    	row = [int(i) for i in row]
+    	d.append(row)
+    sorted_data=sorted(d,key=lambda tup: tup[1],reverse=True)
+    data=[]
+    for line in sorted_data:
+        temp_dict={"name":line[0] , "data":line[1]}
+        data.append(temp_dict)
+    f.close()
+    return data
 
+def makeGraph(request):
+    data=readData()
+    print (data)
+    return render_to_response('myapp/plot.html', {"obj_as_json": json.dumps(data)})
